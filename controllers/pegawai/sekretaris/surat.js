@@ -785,13 +785,6 @@ const generateSuratBalasan = async (req, res) => {
 
         const { nama, nip, foto } = findPegawai;
 
-        if (!foto) {
-            return res.status(404).json({
-                success: false,
-                message: 'TTD Digital pegawai tidak ditemukan'
-            });
-        }
-
         const suratKeluar = await modelSuratKeluar.findOne({
             where: {
                 id_surat_keluar: id_surat_keluar
