@@ -301,6 +301,40 @@ const detailAkun = async (req, res) => {
     }
 }
 
+//tampil detail akun
+const detailAkun = async (req, res) => {
+    try {
+        const id_pegawai = req.session.id_pegawai
+
+        if (!id_pegawai) {
+            return res.redirect('/loginPegawai')
+        }
+        const findAkun = await modelPegawai.findOne({
+            where: {
+                id_pegawai: id_pegawai
+            },
+            attributes: ['username', 'nama', 'nip', 'email', 'foto', 'id_pegawai']
+        })
+        if (!findAkun) {
+            return res.status(400).json({
+                success: false,
+                message: 'Data akun tidak tersedia'
+            })
+        }
+        return res.status(200).json({
+            success: true,
+            message: 'Data akun ditemukan',
+            data: findAkun
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            success: false,
+            message: error
+        })
+    }
+}
+
 
 module.exports = {
     tambahPegawai,
@@ -309,4 +343,5 @@ module.exports = {
     forgotPassword,
     confirmPassword,
     detailAkun,
+    getCurrentUser
 }
