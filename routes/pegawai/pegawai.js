@@ -9,5 +9,6 @@ router.delete('/logoutPegawai', middleware.verifyTokenPegawai, controllers.logou
 router.post('/forgotPass', controllers.forgotPassword)
 router.post('/changePassPegawai/:id_pegawai', controllers.confirmPassword)
 router.get('/dataProfile', middleware.verifyTokenPegawai, controllers.detailAkun)
+router.get('/checkTtdPegawai', middleware.verifyTokenPegawai, controllers.getCurrentUser)
 
 module.exports = router
