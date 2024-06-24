@@ -2,6 +2,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     const logoutButton = document.getElementById('logOut')
     logoutButton.addEventListener('click', async function () {
         try {
+            const userResponse = await fetch('/checkTtdPegawai');
+            const userData = await userResponse.json();
+
+            if (!userData.success) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Terjadi kesalahan saat mendapatkan data pengguna. Silakan coba lagi.'
+                });
+                return;
+            }
+
+            const user = userData.data;
+
+            // Periksa apakah pengguna sudah menambahkan foto
+            if (!user.foto) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Info',
+                    text: 'Silahkan tambahakan TTD Digital terlebih dahulu sebelum logout.',
+                    willClose: () => {
+                        window.location.href = '/profileKepalaBiro';
+                    }
+                });
+                return;
+            }
+
             const response = await fetch('/logoutPegawai', {
                 method: 'DELETE'
             });
@@ -27,6 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Terjadi kesalahan:', error);
         }
     })
+
 
     async function fetchProfileData() {
         try {
