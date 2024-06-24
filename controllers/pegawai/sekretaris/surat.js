@@ -743,6 +743,18 @@ const createSuratBalasan = async (req, res) => {
 };
 
 
+const getMimeType = (ext) => {
+    switch (ext.toLowerCase()) {
+        case '.jpg':
+        case '.jpeg':
+            return 'image/jpeg';
+        case '.png':
+            return 'image/png';
+        default:
+            return 'application/octet-stream';
+    }
+};
+
 // Generate Surat
 const generateSuratBalasan = async (req, res) => {
     try {
@@ -812,6 +824,18 @@ const generateSuratBalasan = async (req, res) => {
             });
         }
 
+        const fotoPath = path.resolve(__dirname, '../../../public/images/pegawai', foto);
+        let ttd_kabir = '';
+
+        if (fs.existsSync(fotoPath)) {
+            const ext = path.extname(fotoPath);
+            const mimeType = getMimeType(ext);
+            const fotoBase64 = fs.readFileSync(fotoPath, 'base64');
+            ttd_kabir = `data:${mimeType};base64,${fotoBase64}`;
+        } else {
+            console.warn('Gambar tanda tangan tidak ditemukan:', fotoPath);
+        }
+
         const dataSurat = {
             nomor_surat: suratKeluar.no_surat,
             created_at: new Date(suratKeluar.created_at).toLocaleDateString('id-ID', {
@@ -827,7 +851,7 @@ const generateSuratBalasan = async (req, res) => {
             periode_magang: suratKeluar.dataSuratMasuk.periode_magang,
             nama,
             nip,
-            ttd_kabir: `/public/images/pegawai/${foto}`, 
+            ttd_kabir,
             mahasiswa: suratKeluar.dataSuratMasuk.dataAnggotaMagang.map((anggota, index) => ({
                 no: index + 1,
                 nama: anggota.nama,
@@ -886,6 +910,7 @@ const generateSuratBalasan = async (req, res) => {
         });
     }
 };
+
 
 
 module.exports = {
